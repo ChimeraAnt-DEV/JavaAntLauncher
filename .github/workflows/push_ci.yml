@@ -2,8 +2,10 @@ name: Build CI
 
 on:
   push:
+    # Pull requests are built by build.yml; this covers direct pushes to the
+    # long-lived branch only, so the same commit is not built twice.
     branches:
-      - '**'
+      - main
   workflow_dispatch:
 
 jobs:

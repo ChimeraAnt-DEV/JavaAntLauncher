@@ -2,48 +2,45 @@
 ![Downloads](https://img.shields.io/github/downloads/ZalithLauncher/ZalithLauncher2/total)
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors)](https://afdian.com/a/MovTery)
 
-[English](README.md) | [简体中文](README_ZH_CN.md)
+[English](README.md) | [繁體中文](README_ZH_TW.md)
 
 
 > [!IMPORTANT]
-> 該專案與 [ZalithLauncher](https://github.com/ZalithLauncher/ZalithLauncher) 屬於兩個完全不同的專案  
+> 该项目与 [ZalithLauncher](https://github.com/ZalithLauncher/ZalithLauncher) 属于两个完全不同的项目  
 
-**Zalith Launcher 2** 是一個全新設計、面向 **Android 裝置** 的 [Minecraft: Java Edition](https://www.minecraft.net/) 啟動器。專案使用 [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk/app_pojavlauncher/src/main/jni) 作為啟動核心，採用 **Jetpack Compose** 與 **Material Design 3** 構建現代化 UI 體驗。  
-我們目前正在搭建自己的官方網站 [zalithlauncher.cn](https://zalithlauncher.cn)  
-此外，我們已注意到有第三方使用「Zalith Launcher」名稱搭建了一個看似官方的網站。請注意：**該網站並非我們創建**，其透過冒用名義並植入廣告牟利。我們對此類行為**不參與、不認可、不信任**。  
-請務必提高警覺，**謹防個人隱私資訊洩露**！  
+**Zalith Launcher 2** 是一个全新设计、面向 **Android 设备** 的 [Minecraft: Java Edition](https://www.minecraft.net/) 启动器。项目使用 [PojavLauncher](https://github.com/PojavLauncherTeam/PojavLauncher/tree/v3_openjdk/app_pojavlauncher/src/main/jni) 作为启动核心，采用 **Jetpack Compose** 与 **Material Design 3** 构建现代化 UI 体验。  
+我们目前正在搭建自己的官方网站 [zalithlauncher.cn](https://zalithlauncher.cn)  
+此外，我们已注意到有第三方使用“Zalith Launcher”名称搭建了一个看似官方的网站。请注意：**该网站并非我们创建**，其通过冒用名义并植入广告牟利。我们对此类行为**不参与、不认可、不信任**。  
+请务必提高警惕，**谨防个人隐私信息泄露**！  
 
-[Discord 伺服器停止營運公告](.github/notice/DiscordStatus_ZH_TW.md)  
-
-
+[Discord 服务器停止运营公告](.github/notice/DiscordStatus_ZH_CN.md)  
 
 
-## 🌐 語言與翻譯支援
+## 🌐 语言与翻译支持
 
-我們正在使用 Weblate 平台翻譯 Zalith Launcher 2，歡迎您前往我們的 [Weblate 專案](https://hosted.weblate.org/projects/zalithlauncher2) 參與翻譯！  
-感謝每一位語言貢獻者的支持，讓 Zalith Launcher 2 更加多語化、更加國際化！
+我们正在使用 Weblate 平台翻译 Zalith Launcher 2，欢迎您前往我们的 [Weblate 项目](https://hosted.weblate.org/projects/zalithlauncher2) 参与翻译！  
+感谢每一位语言贡献者的支持，让 Zalith Launcher 2 更加多语、更加全球化！
 
 
 
 
+## 📦 构建方式（开发者）
 
-## 📦 構建方式（開發者）
+> 以下内容适用于希望参与开发或自行构建应用的用户。
 
-> 以下內容適用於希望參與開發或自行構建應用的使用者。
-
-### 環境要求
+### 环境要求
 
 * Android Studio Bumblebee 以上
 * Android SDK：
     * **最低 API**：26
-    * **目標 API**：35
+    * **目标 API**：35
 * JDK 11
 
-### 構建步驟
+### 构建步骤
 
 ```bash
 git clone git@github.com:ZalithLauncher/ZalithLauncher2.git
-# 使用 Android Studio 開啟專案並進行構建
+# 使用 Android Studio 打开项目并进行构建
 ```
 
 
@@ -51,20 +48,20 @@ git clone git@github.com:ZalithLauncher/ZalithLauncher2.git
 
 ## 📜 License
 
-本專案程式碼遵循 **[GPL-3.0 license](LICENSE)** 開源協議。
+本项目代码遵循 **[GPL-3.0 license](LICENSE)** 开源协议。
 
-### 附加條款（依據 GPLv3 開源授權條款第七條）
+### 附加条款 (依据 GPLv3 开源协议第七条)  
 
-1. 當你分發本程式的修改版本時，必須以合理方式修改該程式的名稱或版本號，以區別於原始版本。（依據 [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374)）
-    - 修改版本 **不得在名稱中包含原程式名稱「ZalithLauncher」或其縮寫「ZL」，亦不得使用與官方名稱相近、可能造成混淆的名稱**。
-    - 所有修改版本 **必須在程式啟動畫面或主介面中以明顯方式標示其為「非官方修改版」**。
-    - 程式的應用名稱可於 [gradle.properties](./ZalithLauncher/gradle.properties) 中進行修改。
+1. 当你分发该程序的修改版本时，你必须以合理方式修改该程序的名称或版本号，以示其与原始版本不同。(依据 [GPLv3, 7(c)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L372-L374))
+   - 修改版本 **不得在名称中包含原程序名称 “ZalithLauncher” 或其缩写 “ZL”，也不得使用与官方名称相近、可能导致混淆的名称**。
+   - 所有修改版本 **必须在程序启动页面或主界面中以明显方式标注其为“非官方修改版”**。
+   - 该程序的应用名称可在 [gradle.properties](./ZalithLauncher/gradle.properties) 中修改。
 
-2. 你不得移除本程式所顯示的版權聲明。（依據 [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370)）
+2. 你不得移除该程序所显示的版权声明。(依据 [GPLv3, 7(b)](https://github.com/ZalithLauncher/ZalithLauncher2/blob/969827b/LICENSE#L368-L370))
 
-## 引用開源專案
-  
-本軟體使用以下開源函式庫:
+## 引用开源项目
+
+本软件使用以下开源库:
 
 | Library                               | Copyright                                                                                                     | License              | Official Link                                                                     |
 |---------------------------------------|---------------------------------------------------------------------------------------------------------------|----------------------|-----------------------------------------------------------------------------------|
