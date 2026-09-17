@@ -50,11 +50,28 @@ not a purchased account, it is a local username: open **Settings → Accounts �
 username, and you can play single-player worlds and mods immediately. You will not be able to join official online
 servers, because those verify ownership with Mojang — that is a server-side rule, not something a launcher can change.
 
+### Signing in without owning Minecraft
+
+You can also sign in with your Microsoft account even if it has never bought Minecraft. Microsoft's identity service
+will authenticate you fine; the launcher then checks ownership against Mojang's `entitlements` service as part of the
+normal login flow. When that check reports no entitlement, the launcher now:
+
+1. **Tells you plainly** that ownership could not be verified and that features may be limited.
+2. **Signs you in anyway**, using your Xbox gamertag as a local offline identity.
+3. **Lets you launch the instance you selected**, immediately, with no further interruption.
+
+What you get in that state is the offline experience: single-player worlds, mods, resource packs and LAN. What you do
+not get is online play against official Mojang servers, because **those servers verify ownership themselves** on every
+connection. No client-side change can alter that — it is their check, not ours.
+
 > [!IMPORTANT]
-> Removing or bypassing the Minecraft purchase/ownership check (DRM) is **not** supported by this project, and no such
-> change will be made. The launcher verifies ownership against Mojang's `entitlements` service during a Microsoft
-> login, which is a requirement of Minecraft's terms of service. Skipping that check would be piracy and would also
-> break multiplayer. Use an offline account instead if online play is not an option for you.
+> This fork does not remove, disable, or bypass the ownership check. It still runs exactly as upstream intends, and
+> still reports honestly. The only change is that a failed check is now treated as a *limitation notice* rather than a
+> hard stop, so a user who signs in with an account that has no entitlement is not left staring at an error with no way
+> forward.
+>
+> For full online play, buying Minecraft: Java Edition is the only legitimate route, and this project will not help you
+> avoid that purchase.
 
 [Discord Server Shutdown Announcement](/.github/notice/DiscordStatus.md)  
 
@@ -86,6 +103,36 @@ git clone git@github.com:ChimeraAnt-DEV/JavaAntLauncher.git
 > This repository is a modified fork of Zalith Launcher 2. The GPLv3 additional terms require that modified versions be
 > distributed under a distinct name; the user-facing application name can be changed in
 > [gradle.properties](./ZalithLauncher/gradle.properties).
+
+### Enabling Microsoft sign-in (required for Microsoft accounts)
+
+Microsoft sign-in **will not work in a build that has no OAuth client ID**, and the failure is confusing: Microsoft's
+device-code endpoint rejects the request with `400 Bad Request` (`AADSTS900144: The request body must contain the
+following parameter: 'client_id'`). The launcher now detects this case up front and tells you, but you still have to
+supply an ID to use Microsoft accounts.
+
+An OAuth client ID is an Azure app registration that belongs to whoever ships the build. Upstream's ID is not yours to
+reuse, so forks must register their own:
+
+1. Open the [Azure Portal](https://portal.azure.com/) → **Microsoft Entra ID** → **App registrations** → **New
+   registration**.
+2. Set **Supported account types** to *Personal Microsoft accounts only* (or *Accounts in any organizational directory
+   and personal Microsoft accounts*).
+3. Under **Authentication**, enable **Allow public client flows** — required for the device-code flow.
+4. Copy the **Application (client) ID**.
+5. Provide it to the build in one of two ways:
+   * **Local builds** — create `ZalithLauncher/.oauth_client_id.txt` containing the ID. This file is git-ignored, so it
+     will not end up in a commit:
+     ```bash
+     echo "00000000-0000-0000-0000-000000000000" > ZalithLauncher/.oauth_client_id.txt
+     ```
+   * **CI builds** — add a repository secret named `OAUTH_CLIENT_ID` (see
+     [build.yml](./.github/workflows/build.yml) for how it is passed in).
+
+   Alternatively you can set `oauth_client_id` in `ZalithLauncher/gradle.properties`, but note that file **is**
+   tracked by git, so it is a poor place for a real value.
+
+Without one of these, offline accounts still work fully; only Microsoft sign-in is unavailable.
 
 ## 🎨 Themes
 
