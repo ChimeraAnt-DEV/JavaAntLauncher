@@ -109,8 +109,11 @@ import com.movtery.zalithlauncher.ui.screens.rememberTransitionSpec
 import com.movtery.zalithlauncher.ui.theme.backgroundColor
 import com.movtery.zalithlauncher.ui.theme.cardColor
 import com.movtery.zalithlauncher.ui.theme.feativals.FestivalTitleText
+import com.movtery.zalithlauncher.ui.theme.LocalPremiumTheme
 import com.movtery.zalithlauncher.ui.theme.onBackgroundColor
 import com.movtery.zalithlauncher.ui.theme.onCardColor
+import com.movtery.zalithlauncher.ui.theme.PremiumBadge
+import com.movtery.zalithlauncher.ui.theme.premiumAmbience
 import com.movtery.zalithlauncher.utils.animation.getAnimateTween
 import com.movtery.zalithlauncher.utils.festival.LocalFestivals
 import com.movtery.zalithlauncher.utils.file.formatFileSize
@@ -166,74 +169,79 @@ fun MainScreen(
         color = backgroundColor,
         contentColor = onBackgroundColor()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            TopBar(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
-                mainScreenKey = mainScreenKey,
-                inLauncherScreen = inLauncherScreen,
-                taskRunning = tasks.isEmpty(),
-                isTasksExpanded = isTaskMenuExpanded,
-                contentColor = onBackgroundColor(),
-                onScreenBack = {
-                    screenBackStackModel.mainScreen.backStack.removeFirstOrNull()
-                },
-                toMainScreen = toMainScreen,
-                toSettingsScreen = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = screenBackStackModel.settingsScreen
-                    )
-                },
-                toDownloadScreen = {
-                    screenBackStackModel.navigateToDownload()
-                },
-                toMultiplayerScreen = {
-                    screenBackStackModel.mainScreen.removeAndNavigateTo(
-                        removes = screenBackStackModel.clearBeforeNavKeys,
-                        screenKey = NormalNavKey.Multiplayer
-                    )
-                },
-                openFileManager = {
-                    eventViewModel.sendEvent(
-                        EventViewModel.Event.OpenFileManager(
-                            rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
-                        )
-                    )
-                },
-                changeExpandedState = {
-                    changeTasksExpandedState()
-                },
-            )
+        Box(modifier = Modifier.fillMaxSize()) {
+            //高级主题下叠加一层缓慢流动的极光辉光，营造“会员级”氛围
+            Box(modifier = Modifier.premiumAmbience())
 
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    .fillMaxSize()
             ) {
-                NavigationUI(
-                    modifier = Modifier.fillMaxSize(),
-                    screenBackStackModel = screenBackStackModel,
-                    toMainScreen = toMainScreen,
-                    eventViewModel = eventViewModel,
-                    modpackImportViewModel = modpackImportViewModel,
-                    submitError = submitError
-                )
-
-                TaskMenu(
-                    tasks = tasks,
-                    isExpanded = isTaskMenuExpanded,
+                TopBar(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(0.3f)
-                        .align(Alignment.CenterStart)
-                        .padding(all = 6.dp)
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    mainScreenKey = mainScreenKey,
+                    inLauncherScreen = inLauncherScreen,
+                    taskRunning = tasks.isEmpty(),
+                    isTasksExpanded = isTaskMenuExpanded,
+                    contentColor = onBackgroundColor(),
+                    onScreenBack = {
+                        screenBackStackModel.mainScreen.backStack.removeFirstOrNull()
+                    },
+                    toMainScreen = toMainScreen,
+                    toSettingsScreen = {
+                        screenBackStackModel.mainScreen.removeAndNavigateTo(
+                            removes = screenBackStackModel.clearBeforeNavKeys,
+                            screenKey = screenBackStackModel.settingsScreen
+                        )
+                    },
+                    toDownloadScreen = {
+                        screenBackStackModel.navigateToDownload()
+                    },
+                    toMultiplayerScreen = {
+                        screenBackStackModel.mainScreen.removeAndNavigateTo(
+                            removes = screenBackStackModel.clearBeforeNavKeys,
+                            screenKey = NormalNavKey.Multiplayer
+                        )
+                    },
+                    openFileManager = {
+                        eventViewModel.sendEvent(
+                            EventViewModel.Event.OpenFileManager(
+                                rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
+                            )
+                        )
+                    },
+                    changeExpandedState = {
+                        changeTasksExpandedState()
+                    },
+                )
+    
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 ) {
-                    changeTasksExpandedState()
+                    NavigationUI(
+                        modifier = Modifier.fillMaxSize(),
+                        screenBackStackModel = screenBackStackModel,
+                        toMainScreen = toMainScreen,
+                        eventViewModel = eventViewModel,
+                        modpackImportViewModel = modpackImportViewModel,
+                        submitError = submitError
+                    )
+    
+                    TaskMenu(
+                        tasks = tasks,
+                        isExpanded = isTaskMenuExpanded,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(0.3f)
+                            .align(Alignment.CenterStart)
+                            .padding(all = 6.dp)
+                    ) {
+                        changeTasksExpandedState()
+                    }
                 }
             }
         }
@@ -335,19 +343,28 @@ private fun <E: TitledNavKey> TopBar(
                 val maxLines = 1
 
                 if (parent == null) {
-                    if (festivals.isEmpty()) {
-                        Text(
-                            text = BuildKeys.LAUNCHER_IDENTIFIER,
-                            style = style,
-                            softWrap = softWarp,
-                            maxLines = maxLines
-                        )
-                    } else {
-                        FestivalTitleText(
-                            festivals = festivals,
-                            style = style,
-                            maxLines = maxLines
-                        )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (festivals.isEmpty()) {
+                            Text(
+                                text = BuildKeys.LAUNCHER_IDENTIFIER,
+                                style = style,
+                                softWrap = softWarp,
+                                maxLines = maxLines
+                            )
+                        } else {
+                            FestivalTitleText(
+                                festivals = festivals,
+                                style = style,
+                                maxLines = maxLines
+                            )
+                        }
+
+                        if (LocalPremiumTheme.current) {
+                            PremiumBadge()
+                        }
                     }
                 } else {
                     val titleText = if (child != null) {

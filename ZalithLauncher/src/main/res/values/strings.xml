@@ -14,6 +14,7 @@
     <string name="generic_paste">Paste</string>
     <string name="generic_more">More</string>
     <string name="generic_setting">Settings</string>
+    <string name="unofficial_build_notice">Unofficial modified build — not affiliated with Zalith Launcher 2</string>
     <string name="generic_expand">Expand</string>
     <string name="generic_collapse">Collapse</string>
     <string name="generic_main_menu">Main Menu</string>
@@ -95,6 +96,8 @@
     <string name="theme_color_verdant_field">Verdant Twilight</string>
     <string name="theme_color_urban_ash">Urban Ash</string>
     <string name="theme_color_verdant_dawn">Silent Forest Dawn</string>
+    <string name="theme_color_obsidian_vip">Obsidian VIP (Premium)</string>
+    <string name="premium_badge_label">VIP</string>
     <string name="theme_color_picker_title">Color Picker</string>
     <string name="theme_color_picker_edit_hex">Edit Hex</string>
     <string name="theme_color_picker_edit_hex_invalid">Invalid Hex</string>
