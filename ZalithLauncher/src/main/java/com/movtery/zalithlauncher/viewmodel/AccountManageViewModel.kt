@@ -559,6 +559,11 @@ class AccountManageViewModel @AssistedInject constructor(
 
     /** 获取微软披风列表 */
     private fun fetchMicrosoftCapes(account: Account) {
+        //未拥有 Minecraft 时没有官方档案，跳过皮肤与披风请求
+        if (!account.ownsMinecraft) {
+            emitToast(androidText(R.string.account_logging_not_purchased_minecraft), Toast.LENGTH_LONG)
+            return
+        }
         TaskSystem.submitTask(
             Task.runTask(
                 id = account.uniqueUUID,

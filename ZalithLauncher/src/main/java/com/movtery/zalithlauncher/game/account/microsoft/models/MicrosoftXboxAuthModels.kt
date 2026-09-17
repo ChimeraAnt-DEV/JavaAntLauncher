@@ -64,5 +64,7 @@ data class XSTSAuthResult(
     @SerialName("token")
     val token: String,
     @SerialName("uhs")
-    val uhs: String
+    val uhs: String,
+    /** Xbox 玩家代号，未拥有 Minecraft 时作为离线身份名称 */
+    val gamertag: String? = null
 )

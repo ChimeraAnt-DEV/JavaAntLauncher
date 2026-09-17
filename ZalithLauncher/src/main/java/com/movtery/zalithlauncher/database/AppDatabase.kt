@@ -34,7 +34,7 @@ import com.movtery.zalithlauncher.game.path.GamePathDao
 
 @Database(
     entities = [Account::class, AuthServer::class, GamePath::class],
-    version = 2,
+    version = 3,
     exportSchema = false //默认不支持导出
 )
 @TypeConverters(Converters::class)
@@ -64,6 +64,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                //已有账号默认视为拥有，避免升级后改变行为
+                db.execSQL("ALTER TABLE accounts ADD COLUMN ownsMinecraft INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         /**
          * 获取全局数据库实例
          */
@@ -74,7 +81,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "launcher_data.db"
                 )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
                 INSTANCE = instance
                 instance

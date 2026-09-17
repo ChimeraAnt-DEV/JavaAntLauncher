@@ -207,6 +207,8 @@ object AccountsManager {
      */
     fun isLaunchCheckNeeded(account: Account): Boolean = when {
         account.isNoLoginRequired() -> false
+        //未拥有 Minecraft 的账号使用离线身份，无需服务端校验
+        account.isMicrosoftAccount() && !account.ownsMinecraft -> false
         account.isMicrosoftAccount() -> !isSessionValidated(account) ||
                 System.currentTimeMillis() > account.expiresAt - 5 * 60 * 1000
         else -> !isSessionValidated(account)

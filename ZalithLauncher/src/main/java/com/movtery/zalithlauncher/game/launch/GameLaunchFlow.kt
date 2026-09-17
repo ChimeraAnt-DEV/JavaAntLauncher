@@ -141,6 +141,11 @@ class GameLaunchFlow(scope: CoroutineScope) {
             version.offlineAccountLogin = true
         }
 
+        //未拥有 Minecraft 的微软账号无法通过服务端校验，同样以降级为离线身份启动
+        if (account.isMicrosoftAccount() && !account.ownsMinecraft) {
+            version.offlineAccountLogin = true
+        }
+
         return buildPhase {
             if (hasNetwork && !skipAccountRefresh && AccountsManager.isLaunchCheckNeeded(account)) {
                 //账号管理页正在刷新该账号时，直接使用现有凭据启动

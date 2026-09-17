@@ -422,7 +422,9 @@
     <string name="account_logging_in_failed">登入失敗</string>
     <string name="account_logging_in_saving">獲取玩家皮膚、儲存帳號資訊</string>
     <string name="account_logging_time_out">網路連線逾時，請檢查網路環境。</string>
-    <string name="account_logging_not_purchased_minecraft">未偵測到 Minecraft 購買資訊，請前往 Minecraft 官方網站購買。</string>
+    <string name="account_logging_not_purchased_minecraft">已登入，但未偵測到 Minecraft 購買資訊。你仍可遊玩單人遊戲與使用模組；多人連線與 Realms 需要擁有正版。</string>
+    <string name="account_logging_missing_client_id">此組建未設定 Microsoft OAuth 用戶端 ID，無法使用微軟登入。請在 ZalithLauncher/gradle.properties 設定 oauth_client_id（或加入 OAUTH_CLIENT_ID 組建密鑰），使用你自己的 Azure 應用程式註冊後重新組建。</string>
+    <string name="account_not_owned_hint">未驗證擁有權 — 僅可離線遊玩</string>
     <string name="account_relogin_title">需要重新登入</string>
     <string name="account_relogin_microsoft_message">啟動器無法重新整理該 Microsoft 帳號的登入憑證，帳號密碼可能已被修改，或登入授權已失效，需要重新登入 Microsoft 帳號。</string>
     <string name="account_relogin_password_message">驗證伺服器拒絕了目前登入，密碼可能已被修改，請重新輸入 %s 的密碼。</string>

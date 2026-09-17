@@ -33,6 +33,7 @@ import com.movtery.zalithlauncher.game.account.auth_server.getAuthServeInfo
 import com.movtery.zalithlauncher.game.account.microsoft.AsyncStatus
 import com.movtery.zalithlauncher.game.account.microsoft.AuthType
 import com.movtery.zalithlauncher.game.account.microsoft.MinecraftProfileException
+import com.movtery.zalithlauncher.game.account.microsoft.MissingOAuthClientIdException
 import com.movtery.zalithlauncher.game.account.microsoft.NotPurchasedMinecraftException
 import com.movtery.zalithlauncher.game.account.microsoft.XboxLoginException
 import com.movtery.zalithlauncher.game.account.microsoft.fetchDeviceCodeResponse
@@ -155,6 +156,14 @@ fun microsoftLogin(
             AccountsManager.saveAccount(account)
             AccountsManager.markSessionValidated(account)
             Logger.info(TAG, "Microsoft account login successful: ${account.username}")
+            if (!account.ownsMinecraft) {
+                //登录成功但未拥有游戏：提示功能受限，不阻止继续使用
+                Logger.info(TAG, "Account ${account.username} does not own Minecraft, limited functionality")
+                showToast(
+                    androidText(R.string.account_logging_not_purchased_minecraft),
+                    Toast.LENGTH_LONG
+                )
+            }
             onSuccess()
         },
         onError = { th ->
@@ -163,6 +172,7 @@ fun microsoftLogin(
             }
             when (th) {
                 is HttpRequestTimeoutException -> androidText(R.string.account_logging_time_out)
+                is MissingOAuthClientIdException -> th.toLocal()
                 is NotPurchasedMinecraftException -> toLocal()
                 is MinecraftProfileException -> th.toLocal()
                 is XboxLoginException -> th.toLocal()
@@ -272,6 +282,8 @@ suspend fun Account.refreshMicrosoft(
         this.username = newAcc.username
         this.refreshToken = newAcc.refreshToken
         this.xUid = newAcc.xUid
+        this.ownsMinecraft = newAcc.ownsMinecraft
+        this.skinModelType = newAcc.skinModelType
     }
 }
 
@@ -304,6 +316,7 @@ fun Throwable.isReloginRequired(): Boolean {
 }
 
 fun accountErrorText(th: Throwable): AndroidStringText = when (th) {
+    is MissingOAuthClientIdException -> th.toLocal()
     is NotPurchasedMinecraftException -> toLocal()
     is MinecraftProfileException -> th.toLocal()
     is XboxLoginException -> th.toLocal()

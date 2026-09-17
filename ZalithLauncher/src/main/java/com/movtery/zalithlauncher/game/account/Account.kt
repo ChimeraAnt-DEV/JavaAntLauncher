@@ -59,7 +59,12 @@ data class Account(
     var otherAccount: String? = null,
     var otherPassword: String? = null,
     var accountType: String? = null,
-    var skinModelType: SkinModelType = SkinModelType.NONE
+    var skinModelType: SkinModelType = SkinModelType.NONE,
+    /**
+     * 账号是否通过 Minecraft 所有权校验
+     * 未通过时改用离线身份启动，仅影响联机功能，单人游戏与模组不受影响
+     */
+    var ownsMinecraft: Boolean = true
 ): Parcelable {
     val hasSkinFile: Boolean
         get() = getSkinFile().exists()
@@ -75,6 +80,8 @@ data class Account(
      * 下载并更新账号的皮肤文件
      */
     suspend fun downloadYggdrasil() = withContext(Dispatchers.IO) {
+        //未拥有 Minecraft 时不存在官方档案，跳过皮肤/披风请求
+        if (!ownsMinecraft) return@withContext
         val baseUrl = when {
             isMicrosoftAccount() -> "https://sessionserver.mojang.com"
             isAuthServerAccount() -> otherBaseUrl!!.removeSuffix("/") + "/sessionserver/"

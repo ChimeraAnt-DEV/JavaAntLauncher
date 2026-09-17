@@ -476,7 +476,9 @@
     <string name="account_logging_frequent">Login attempts are too frequent. Please try again later.</string>
     <string name="account_logging_blocked_ip">The current IP address has been blocked from logging in.</string>
     <string name="account_logging_profile_not_exists">Please create a Minecraft player profile first, then try logging in again!</string>
-    <string name="account_logging_not_purchased_minecraft">Minecraft ownership not verified. Please purchase it from Minecraft\'s official website.</string>
+    <string name="account_logging_not_purchased_minecraft">Signed in, but Minecraft ownership could not be verified. You can still play single-player and use mods; online multiplayer and Realms require a purchased copy.</string>
+    <string name="account_logging_missing_client_id">This build has no Microsoft OAuth client ID configured, so Microsoft sign-in cannot work. Set oauth_client_id in ZalithLauncher/gradle.properties (or add an OAUTH_CLIENT_ID build secret) using your own Azure app registration, then rebuild.</string>
+    <string name="account_not_owned_hint">Ownership unverified — offline play only</string>
     <string name="account_relogin_title">Sign In Required</string>
     <string name="account_relogin_microsoft_message">The launcher failed to refresh this Microsoft account\'s sign-in credentials. The password may have been changed or the authorization has been revoked, so you need to sign in to the Microsoft account again.</string>
     <string name="account_relogin_password_message">The auth server rejected the current sign-in, possibly because the password has been changed. Please enter the password of %s again.</string>

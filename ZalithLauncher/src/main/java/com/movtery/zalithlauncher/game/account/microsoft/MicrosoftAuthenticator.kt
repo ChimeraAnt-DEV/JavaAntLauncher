@@ -42,6 +42,7 @@ import com.movtery.zalithlauncher.game.account.microsoft.models.XSTSAuthResult
 import com.movtery.zalithlauncher.game.account.microsoft.models.XSTSProperties
 import com.movtery.zalithlauncher.game.account.microsoft.models.XSTSRequest
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinModelType
+import com.movtery.zalithlauncher.game.account.wardrobe.getLocalUUIDWithSkinModel
 import com.movtery.zalithlauncher.game.account.yggdrasil.findUsing
 import com.movtery.zalithlauncher.game.account.yggdrasil.getPlayerProfile
 import com.movtery.zalithlauncher.game.account.yggdrasil.getSkinModel
@@ -97,6 +98,10 @@ const val MINECRAFT_SERVICES_URL = "https://api.minecraftservices.com"
  * 设备代码用于在单独的设备或浏览器上授权用户
  */
 suspend fun fetchDeviceCodeResponse(context: CoroutineContext): DeviceCodeResponse = coroutineScope {
+    //未配置客户端 ID 时微软会返回 400，提前抛出可给出明确指引
+    if (BuildKeys.OAUTH_CLIENT_ID.isBlank()) {
+        throw MissingOAuthClientIdException()
+    }
     withRetry {
         submitForm(
             url = "$MICROSOFT_AUTH_URL$TENANT/oauth2/v2.0/devicecode",
@@ -215,7 +220,7 @@ private suspend fun ClientRequestException.errorCode(): String? {
  *
  * 支持刷新现有访问令牌或使用提供的访问令牌。然后，继续使用 Xbox Live （XBL）、Xbox 安全令牌服务 （XSTS） 进行身份验证，最后访问 Minecraft。
  *
- * 支持验证用户是否拥有游戏，然后创建 [Account] 对象。
+ * 支持验证用户是否拥有游戏。若未拥有，则降级为离线身份创建 [Account] 对象，不再中断登录。
  *
  * @param statusUpdate 验证执行到哪个步骤，通过这个进行回调更新
  */
@@ -238,9 +243,20 @@ suspend fun microsoftAuthAsync(
     Logger.debug(TAG, "Authenticating with Minecraft services")
     val authResponse = authenticateMinecraft(xstsToken, statusUpdate, context)
     Logger.debug(TAG, "Verifying Minecraft ownership")
-    verifyGameOwnership(authResponse.accessToken, statusUpdate)
+    val ownsMinecraft = verifyGameOwnership(authResponse.accessToken, statusUpdate)
 
-    return@coroutineScope createAccount(authResponse, newRefreshToken, xblToken.second, statusUpdate)
+    if (!ownsMinecraft) {
+        Logger.info(TAG, "Account does not own Minecraft, falling back to an offline identity")
+    }
+
+    return@coroutineScope createAccount(
+        authResponse = authResponse,
+        refreshToken = newRefreshToken,
+        uhs = xblToken.second,
+        ownsMinecraft = ownsMinecraft,
+        fallbackUsername = xstsToken.gamertag,
+        statusUpdate = statusUpdate
+    )
 }
 
 /**
@@ -355,7 +371,14 @@ private suspend fun authenticateXSTS(
                 context = context
             )
 
-            XSTSAuthResult(token = response["Token"].text(), uhs = uhs)
+            XSTSAuthResult(
+                token = response["Token"].text(),
+                uhs = uhs,
+                gamertag = response["DisplayClaims"]?.jsonObject
+                    ?.get("xui")?.jsonArray
+                    ?.firstOrNull()?.jsonObject
+                    ?.get("gtg")?.jsonPrimitive?.content
+            )
         } catch (e: ClientRequestException) {
             // XSTS 对账号类问题统一返回 4xx 及 XErr 错误码，expectSuccess 会提前抛出异常
             // 因此必须从异常响应体中解析 XErr，才能向用户展示真实的失败原因
@@ -407,15 +430,17 @@ private suspend fun authenticateMinecraft(
     }
 }
 
-private suspend fun verifyGameOwnership(accessToken: String, update: (AsyncStatus) -> Unit) {
+/**
+ * 校验账号是否拥有 Minecraft
+ * @return 拥有返回 true；未拥有返回 false，由调用方决定降级处理，不再中断登录
+ */
+private suspend fun verifyGameOwnership(accessToken: String, update: (AsyncStatus) -> Unit): Boolean {
     update(AsyncStatus.VERIFY_GAME_OWNERSHIP)
-    withRetry {
+    return withRetry {
         val response = GLOBAL_CLIENT.get("$MINECRAFT_SERVICES_URL/entitlements/mcstore") {
             header(HttpHeaders.Authorization, "Bearer $accessToken")
         }
-        if (response.safeBodyAsJson<JsonObject>()["items"]?.jsonArray?.isEmpty() != false) {
-            throw NotPurchasedMinecraftException()
-        }
+        response.safeBodyAsJson<JsonObject>()["items"]?.jsonArray?.isNotEmpty() == true
     }
 }
 
@@ -423,8 +448,31 @@ private suspend fun createAccount(
     authResponse: MinecraftAuthResponse,
     refreshToken: String,
     uhs: String,
+    ownsMinecraft: Boolean,
+    fallbackUsername: String?,
     statusUpdate: (AsyncStatus) -> Unit
 ): Account {
+    if (!ownsMinecraft) {
+        //未拥有 Minecraft 时无法读取官方档案，改用 Xbox 玩家代号构造离线身份
+        val username = fallbackUsername?.takeIf { it.isNotBlank() } ?: "Player"
+        val profileId = getLocalUUIDWithSkinModel(username, SkinModelType.NONE)
+        //避免同一个账号反复添加
+        val account = AccountsManager.loadFromProfileID(profileId, AccountType.MICROSOFT.tag) ?: Account()
+
+        return account.apply {
+            this.username = username
+            this.profileId = profileId
+            this.accessToken = authResponse.accessToken
+            this.expiresAt = System.currentTimeMillis() + authResponse.expiresIn * 1000
+            this.accountType = AccountType.MICROSOFT.tag
+            this.clientToken = BuildKeys.LAUNCHER_NAME.toUuidStr().replace("-", "")
+            this.refreshToken = refreshToken.ifEmpty { "None" }
+            this.xUid = uhs
+            this.skinModelType = SkinModelType.NONE
+            this.ownsMinecraft = false
+        }
+    }
+
     statusUpdate(AsyncStatus.GETTING_PLAYER_PROFILE)
 
     val profile = getPlayerProfile(
@@ -446,6 +494,7 @@ private suspend fun createAccount(
         this.refreshToken = refreshToken.ifEmpty { "None" }
         this.xUid = uhs
         this.skinModelType = profile.skins.findUsing()?.getSkinModel() ?: SkinModelType.NONE
+        this.ownsMinecraft = true
     }
 }
 
