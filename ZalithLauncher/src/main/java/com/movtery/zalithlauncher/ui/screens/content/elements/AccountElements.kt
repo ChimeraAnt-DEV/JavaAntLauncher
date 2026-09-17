@@ -391,6 +391,13 @@ fun AccountItem(
                     text = getAccountTypeName(account),
                     style = MaterialTheme.typography.labelMedium
                 )
+                if (account.isMicrosoftAccount() && !account.ownsMinecraft) {
+                    Text(
+                        text = stringResource(R.string.account_not_owned_hint),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
             Row {
                 //更换皮肤/披风

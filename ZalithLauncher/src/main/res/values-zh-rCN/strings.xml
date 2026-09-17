@@ -476,7 +476,9 @@
     <string name="account_logging_frequent">登录过于频繁，请稍后再试。</string>
     <string name="account_logging_blocked_ip">当前 IP 地址已被禁止登陆。</string>
     <string name="account_logging_profile_not_exists">请先创建 Minecraft 玩家档案，然后再重新登陆！</string>
-    <string name="account_logging_not_purchased_minecraft">未检查到 Minecraft 配置信息，请前往 Minecraft 的官方网站购买。</string>
+    <string name="account_logging_not_purchased_minecraft">已登录，但未检测到 Minecraft 购买信息。你仍可游玩单人游戏和使用模组；联机与 Realms 需要拥有正版。</string>
+    <string name="account_logging_missing_client_id">此构建未配置 Microsoft OAuth 客户端 ID，无法使用微软登录。请在 ZalithLauncher/gradle.properties 中设置 oauth_client_id（或添加 OAUTH_CLIENT_ID 构建密钥），使用你自己的 Azure 应用注册后重新构建。</string>
+    <string name="account_not_owned_hint">未验证拥有权 — 仅可离线游玩</string>
     <string name="account_relogin_title">需要重新登录</string>
     <string name="account_relogin_microsoft_message">启动器无法刷新该微软账号的登录凭据，账号密码可能已被修改，或登录授权已失效，需要重新登录微软账号。</string>
     <string name="account_relogin_password_message">验证服务器拒绝了当前登录，密码可能已被修改，请重新输入 %s 的密码。</string>
