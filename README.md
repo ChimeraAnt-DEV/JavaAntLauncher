@@ -45,24 +45,30 @@ The launcher supports three account types:
 | **Offline / Local** | A local username that never touches Mojang's servers — no purchase, no login | ❌ No (single-player and LAN only) |
 | **Auth server** | A third-party Yggdrasil / authlib server (e.g. a community server) | ✅ Yes, on that server |
 
-**If you cannot afford Minecraft: Java Edition**, the **offline (local) account** option is the supported route. It is
-not a purchased account, it is a local username: open **Settings → Accounts → Add account → Local account**, pick a
-username, and you can play single-player worlds and mods immediately. You will not be able to join official online
-servers, because those verify ownership with Mojang — that is a server-side rule, not something a launcher can change.
+**You do not need to own Minecraft or have a Microsoft account to play.** The **offline (local) account** option is
+fully supported and available to everyone on every build: open **Settings → Accounts → Add account → Local account**,
+pick a username, and you can play single-player worlds, mods and resource packs immediately. The launcher never forces
+you through Microsoft sign-in.
 
-### Signing in without owning Minecraft
+Local accounts are also the route to join **offline/cracked servers** (servers that do not verify ownership with
+Mojang). Whether a server accepts you is that server's own check, not something a launcher can change — servers that
+verify ownership with Mojang will reject an unowned account no matter what the launcher sends, so use a local account
+with servers that allow it.
 
-You can also sign in with your Microsoft account even if it has never bought Minecraft. Microsoft's identity service
-will authenticate you fine; the launcher then checks ownership against Mojang's `entitlements` service as part of the
-normal login flow. When that check reports no entitlement, the launcher now:
+### Signing in with a Microsoft account
 
-1. **Tells you plainly** that ownership could not be verified and that features may be limited.
-2. **Signs you in anyway**, using your Xbox gamertag as a local offline identity.
-3. **Lets you launch the instance you selected**, immediately, with no further interruption.
+If you have a Microsoft account, you can sign in with it even if it has never bought Minecraft. Microsoft's identity
+service authenticates you; the launcher then checks ownership against Mojang's `entitlements` service as part of the
+normal login flow. When that check reports no entitlement, the launcher:
+
+1. **Signs you in anyway**, using your Xbox gamertag as a local offline identity.
+2. **Lets you launch the instance you selected**, immediately, with no further interruption.
+3. Shows a small "ownership unverified" hint so you know to expect the offline experience.
 
 What you get in that state is the offline experience: single-player worlds, mods, resource packs and LAN. What you do
 not get is online play against official Mojang servers, because **those servers verify ownership themselves** on every
-connection. No client-side change can alter that — it is their check, not ours.
+connection. No client-side change can alter that — it is their check, not ours. Offline/cracked servers will accept
+the account normally.
 
 > [!IMPORTANT]
 > This fork does not remove, disable, or bypass the ownership check. It still runs exactly as upstream intends, and
@@ -106,9 +112,13 @@ git clone git@github.com:ChimeraAnt-DEV/JavaAntLauncher.git
 
 ### Enabling Microsoft sign-in (required for Microsoft accounts)
 
-Microsoft sign-in **will not work in a build that has no OAuth client ID**, and the failure is confusing: Microsoft's
-device-code endpoint rejects the request with `400 Bad Request` (`AADSTS900144: The request body must contain the
-following parameter: 'client_id'`). The launcher now detects this case up front and tells you, but you still have to
+Microsoft sign-in **is entirely optional**. The build this text ships with has no OAuth client ID, so Microsoft sign-in
+is unavailable — the launcher tells you so and points you to the local account flow instead. You can ignore Microsoft
+sign-in completely and use a local account to play single-player, mods and offline/cracked servers.
+
+If you maintain your own fork and want to enable Microsoft sign-in, you need to supply a client ID: Microsoft's
+device-code endpoint rejects a request without one with `400 Bad Request` (`AADSTS900144: The request body must contain
+the following parameter: 'client_id'`). The launcher detects this case up front and tells you, but you still have to
 supply an ID to use Microsoft accounts.
 
 An OAuth client ID is an Azure app registration that belongs to whoever ships the build. Upstream's ID is not yours to
@@ -132,7 +142,7 @@ reuse, so forks must register their own:
    Alternatively you can set `oauth_client_id` in `ZalithLauncher/gradle.properties`, but note that file **is**
    tracked by git, so it is a poor place for a real value.
 
-Without one of these, offline accounts still work fully; only Microsoft sign-in is unavailable.
+Without one of these, offline/local accounts still work fully; only Microsoft sign-in is unavailable.
 
 ## 🎨 Themes
 

@@ -249,15 +249,13 @@ class AccountManageViewModel @AssistedInject constructor(
         AccountsManager.accountsFlow,
         AccountsManager.currentAccountFlow,
         AccountsManager.authServersFlow,
-        _accountCapeOpMap,
-        AccountsManager.isOffline
-    ) { accounts, currentAccount, authServers, accountCapeOpMap, isOffline ->
+        _accountCapeOpMap
+    ) { accounts, currentAccount, authServers, accountCapeOpMap ->
         ProfileUiState(
             accounts = accounts,
             currentAccount = currentAccount,
             authServers = authServers,
-            accountCapeOpMap = accountCapeOpMap,
-            isOffline = isOffline
+            accountCapeOpMap = accountCapeOpMap
         )
     }.stateIn(
         scope = viewModelScope,
@@ -269,8 +267,7 @@ class AccountManageViewModel @AssistedInject constructor(
         val accounts: List<Account> = emptyList(),
         val currentAccount: Account? = null,
         val authServers: List<AuthServer> = emptyList(),
-        val accountCapeOpMap: Map<String, List<PlayerProfile.Cape>> = emptyMap(),
-        val isOffline: Boolean = false
+        val accountCapeOpMap: Map<String, List<PlayerProfile.Cape>> = emptyMap()
     )
 
     /**

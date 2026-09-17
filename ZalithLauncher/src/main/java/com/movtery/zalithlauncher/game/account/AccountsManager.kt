@@ -25,10 +25,8 @@ import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.database.AppDatabase
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServerDao
-import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.androidText
-import com.movtery.zalithlauncher.utils.isInGreaterChina
 import com.movtery.zalithlauncher.utils.logging.Logger
 import com.movtery.zalithlauncher.utils.network.isNetworkAvailable
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +36,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.apache.commons.io.FileUtils
-import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -63,9 +60,6 @@ object AccountsManager {
     private val _refreshWardrobe = MutableStateFlow(false)
     /** 控制刷新所有账号衣橱 */
     val refreshWardrobe = _refreshWardrobe.asStateFlow()
-
-    private val _isOffline = MutableStateFlow(false)
-    val isOffline = _isOffline
 
     //本次启动器会话内已通过服务端校验的账号
     private val sessionValidatedAccounts: MutableSet<String> = ConcurrentHashMap.newKeySet()
@@ -236,21 +230,12 @@ object AccountsManager {
     }
 
     /**
-     * 刷新当前账号，同时刷新非中国大陆地区的正版状态
+     * 刷新当前账号状态。
+     * 本地账号与微软离线账号均被允许，不再根据地区或是否拥有游戏进行限制
      */
     private fun refreshCurrentAccountState() {
         val currentAccount = getCurrentAccount()
-        val isOffline = checkLimit()
-        _currentAccountFlow.update {
-            //若处于非正版状态，不允许使用账号
-            if (isOffline) null else currentAccount
-        }
-        _isOffline.update { isOffline }
-    }
-
-    private fun checkLimit(): Boolean {
-        val circumventLimit = File(PathManager.DIR_FILES_EXTERNAL, "circumventLimit")
-        return !circumventLimit.exists() && !isInGreaterChina() && !hasMicrosoftAccount()
+        _currentAccountFlow.update { currentAccount }
     }
 
     /**
