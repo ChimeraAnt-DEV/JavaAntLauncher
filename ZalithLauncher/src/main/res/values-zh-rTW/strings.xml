@@ -358,6 +358,7 @@
     <!--  啟動遊戲  -->
     <string name="game_launch_no_version">未選擇遊戲版本！</string>
     <string name="game_launch_no_account">未登入遊戲帳號！</string>
+    <string name="game_launch_invalid_version">該版本無法啟動：版本檔案缺失或已損毀。請重新安裝該版本後再試。</string>
     <string name="game_auto_pick_runtime_failed">找不到合適的執行環境，已設定為目前版本選擇的執行環境。</string>
     <string name="game_button_input">輸入法</string>
     <string name="game_button_force_close">強制關閉</string>

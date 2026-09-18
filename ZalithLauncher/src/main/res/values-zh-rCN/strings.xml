@@ -401,6 +401,7 @@
     <!--  启动游戏  -->
     <string name="game_launch_no_version">未选择游戏版本！</string>
     <string name="game_launch_no_account">未登录游戏账号！</string>
+    <string name="game_launch_invalid_version">该版本无法启动：版本文件缺失或已损坏。请重新安装该版本后再试。</string>
     <string name="game_auto_pick_runtime_failed">未找到合适的运行环境，已设置为当前版本选择的运行环境。</string>
     <string name="game_button_input">输入法</string>
     <string name="game_button_force_close">强制关闭</string>
