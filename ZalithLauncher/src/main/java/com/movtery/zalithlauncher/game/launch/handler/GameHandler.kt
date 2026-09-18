@@ -103,13 +103,16 @@ class GameHandler(
 //            set("options.narrator", "0")
 //            set("narrator", "0")
 
-            if (version.getVersionInfo()!!.minecraftVersion.isLowerVer("1.13")) {
-                //fix: 牢版本按键事件
-                //shift + w -> 87 错误的触发了F11，切换全屏
-                set("key_key.fullscreen", "0")
-                //输入字符@ -> 64 错误的触发了F6，触发“开始/停止直播”
-                set("key_key.streamStartStop", "0")
-                set("key_key.streamPauseUnpause", "0")
+            //版本信息缺失时无法判断版本号，跳过这些兼容性修正而不是中断启动
+            version.getVersionInfo()?.minecraftVersion?.let { minecraftVersion ->
+                if (minecraftVersion.isLowerVer("1.13")) {
+                    //fix: 牢版本按键事件
+                    //shift + w -> 87 错误的触发了F11，切换全屏
+                    set("key_key.fullscreen", "0")
+                    //输入字符@ -> 64 错误的触发了F6，触发“开始/停止直播”
+                    set("key_key.streamStartStop", "0")
+                    set("key_key.streamPauseUnpause", "0")
+                }
             }
 
             set("overrideWidth", screenSize.width.toString())
@@ -126,7 +129,9 @@ class GameHandler(
                 else -> set(graphicsOption, graphicsApi.option)
             }
 
-            loadLanguage(version.getVersionInfo()!!.minecraftVersion)
+            version.getVersionInfo()?.minecraftVersion?.let { minecraftVersion ->
+                loadLanguage(minecraftVersion)
+            }
             save()
         }
 

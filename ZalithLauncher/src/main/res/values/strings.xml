@@ -401,6 +401,7 @@
     <!-- Game Launch -->
     <string name="game_launch_no_version">No game version selected!</string>
     <string name="game_launch_no_account">No account logged in!</string>
+    <string name="game_launch_invalid_version">This version cannot be launched: its version file is missing or damaged. Reinstall the version and try again.</string>
     <string name="game_auto_pick_runtime_failed">No compatible runtime found. Using selected version\'s runtime.</string>
     <string name="game_button_input">Input Method</string>
     <string name="game_button_force_close">Force Close</string>

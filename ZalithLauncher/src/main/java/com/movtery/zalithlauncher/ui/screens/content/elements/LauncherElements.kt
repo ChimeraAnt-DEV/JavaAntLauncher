@@ -130,6 +130,8 @@ sealed interface LaunchGameOperation {
     data object NoVersion : LaunchGameOperation
     /** 版本名称非法时 */
     data class InvalidVersionName(val th: InvalidFilenameException) : LaunchGameOperation
+    /** 选中的版本无法读取版本信息（缺少或损坏的 json），无法启动 */
+    data class InvalidVersion(val version: Version) : LaunchGameOperation
     /** 没有可用账号 */
     data object NoAccount : LaunchGameOperation
 
@@ -228,6 +230,13 @@ fun LaunchGameOperation(
                 launchGameViewModel.updateOperation(LaunchGameOperation.None)
             }
         }
+        is LaunchGameOperation.InvalidVersion -> {
+            LaunchedEffect(Unit) {
+                eventViewModel.sendToast(androidText(R.string.game_launch_invalid_version))
+                toVersionManageScreen()
+                launchGameViewModel.updateOperation(LaunchGameOperation.None)
+            }
+        }
         is LaunchGameOperation.RendererNoStoragePermission -> {
             LaunchedEffect(Unit) {
                 val renderer = operation.renderer
@@ -303,7 +312,13 @@ fun LaunchGameOperation(
                 Renderers.setCurrentRenderer(version.getRenderer())
                 val currentRenderer = Renderers.getCurrentRenderer()
 
-                val mcVer = version.getVersionInfo()!!.minecraftVersion
+                //缺少或损坏的版本 json 会导致版本信息为 null，后续所有取用都会失败
+                //这里提前拦截，避免启动过程中直接崩溃
+                val versionInfo = version.getVersionInfo() ?: run {
+                    launchGameViewModel.updateOperation(LaunchGameOperation.InvalidVersion(version))
+                    return@LaunchedEffect
+                }
+                val mcVer = versionInfo.minecraftVersion
 
                 // 设备完全支持 Vulkan 时跳过渲染器的版本支持检查
                 if (!version.hasVulkanBackend() || !ensureVulkanSupported(version)) {
